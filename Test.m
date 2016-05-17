@@ -1,4 +1,4 @@
-#% Testing script for the project.
+% Testing script for the project.
 %**************************************************************************
 %initializting all variables
 
@@ -7,7 +7,7 @@ selection = a(1:5);                               %the selection matrix for trai
 testing_Image_Index = a(6:10);                    %index for test8ing images, the left over images from selection matrix                      
 size = 50;                                        %rescale size for trainning model
 dirName = uigetdir(pwd);                            %get the directory where image sets is at, starting path is the current path
-Trainning_data = getAllFiles(dir_name, selection , size);   %get the trainned calss cell array by calling getAllFiles function
+Trainning_data = getAllFiles(dirName, selection , size);   %get the trainned calss cell array by calling getAllFiles function
 
 %**************************************************************************
 %recursively treaversing through all image set to test the system
