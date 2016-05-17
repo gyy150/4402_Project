@@ -80,7 +80,7 @@ while 1
     axes(handles.inputAxes);
     imshow(gray_inputImage);
 
-    % loop through 
+    % 
 end
 
     
