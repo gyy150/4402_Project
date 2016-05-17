@@ -68,19 +68,44 @@ function run()
 % get test data
 testData = getAllFiles('Image Dataset');
 
+% get all test images
+testImages = [];
+for i=1:size(testData,1)
+    testPaths  = [testImages , testData{3}(i)];
+    for i = 1:size(testData{1,3},1)
+        
+end
+
+% get all training images
+
 % run simulation indefinatly
 while 1
 
     % pick a random class
     testClass = testData(randperm(40,1));
     
+    % get test images paths
+    testPaths = cell2mat(testClass(3));
+    
+    % get image path from class randomly
+    imPath = testPaths(randperm(5,1));
+    
     % load a random test image from that class
-    inputImage = imread(testClass(1)[randperm(5,1)]);
+    inputImage = imread(imPath);
     gray_inputImage = rgb2gray(inputImage);
     axes(handles.inputAxes);
     imshow(gray_inputImage);
 
-    % 
+    % calc class for image
+    class = getClass(imPath, testData);
+    
+    % loop throu other classes and display images
+    for i=1:6
+        rand = randperm(40,1);
+        rand2 = randperm(10,1);
+        if(~strcmp(class(1),testData{1}(rand))
+            outputImage = rgb2gray(testData{2}
+    
 end
 
     
