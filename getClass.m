@@ -1,9 +1,9 @@
-function [ class ] = getClass( imagePath , testData, size)
+function [ class ] = getClass( imagePath , testData, scale)
 
 class = []; % size 3 vector holding the class name, the dist and a image path from the class that is not the input image path
 
 % turn image into vector
-imVector = get_image_vector(imagePath , size);
+imVector = get_image_vector(imagePath , scale);
 
 % loop through class list and calc distances
 for i = 1:size(testData,1)
