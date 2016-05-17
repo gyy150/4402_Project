@@ -14,12 +14,12 @@ function [Regressor_list]= getAllFiles(dirName, selection, size)
                                                       % a patern spercifying the index of image within a class that shall be used as trainning image
                                                       % each class is identified by it's folder's name
     Regressor_list = [];                              % Initialize the regressor list array
-   
+    
     if ~isempty(fileList)
         image_vector = [];
         for i = selection
             file_name = fileList(i);
-            image_vector() = [image_vector get_image_vector(fullfile(dirName,file_name{1}))];          %#stacking the image vector for each training image to build regressor
+            image_vector = [image_vector get_image_vector(fullfile(dirName,file_name{1}))];          %#stacking the image vector for each training image to build regressor
         end
         
         %# after the loop, the Regressor for this class is the now stacked image_vector;
