@@ -16,6 +16,5 @@ function [ dist , altPath ] = cmpClass( imVector, imagePath, classCell )
         b = b + 1;
         altPath = trainingPaths{b};
     end
-
 end
 

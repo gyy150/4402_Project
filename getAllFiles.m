@@ -24,7 +24,7 @@ function [test_data]= getAllFiles(dirName, selection, size)
         image_vector = [];
         train_paths = {};
         test_paths = {};
-        for i = 1:10
+        for i = 1:length(fileList)
             if any(i == selection)
                 train_paths = [train_paths; fullfile(dirName,fileList{i})];
                 file_name = fileList(i);
