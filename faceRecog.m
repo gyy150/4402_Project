@@ -97,6 +97,41 @@ function dataSel_Callback(hObject, eventdata, handles)
 handles.dirName  = uigetdir('.\*.*','Please select an image dataset directory to load');
 [~, onlyDir, ~] = fileparts(handles.dirName);
 
+% Retrieve the class size and image size
+[classSize, widthRes] = imageSetProp(handles.dirName);
+set(handles.maxSize,'String',int2str(widthRes));
+
+if classSize > 0
+    set(handles.checkbox1,'visible','on')
+    if classSize > 1
+        set(handles.checkbox2,'visible','on')
+        if classSize > 2
+            set(handles.checkbox3,'visible','on')
+            if classSize > 3
+                set(handles.checkbox4,'visible','on')
+                if classSize > 4
+                    set(handles.checkbox5,'visible','on')
+                    if classSize > 5
+                        set(handles.checkbox6,'visible','on')
+                        if classSize > 6
+                            set(handles.checkbox7,'visible','on')
+                            if classSize > 7
+                                set(handles.checkbox8,'visible','on')
+                                if classSize > 8
+                                    set(handles.checkbox9,'visible','on')
+                                    if classSize > 9
+                                        set(handles.checkbox10,'visible','on')
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
 % Display directory name
 set(handles.datasetText,'String',onlyDir);
 
