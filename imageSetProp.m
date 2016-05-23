@@ -1,4 +1,4 @@
-function [classSize, widthRes] = imageSetProp(dirName)
+function [classSize, heightRes, widthRes] = imageSetProp(dirName)
 
     dirData = dir(dirName);                             % Get the data for the current directory
     dirIndex = [dirData.isdir];                         % Find the index for directories
@@ -17,6 +17,6 @@ function [classSize, widthRes] = imageSetProp(dirName)
     
     imString = fullfile(subDir1, subFileList(1));
     testIm = imread(imString{1});
-    [~, widthRes] = size(testIm);
+    [heightRes, widthRes] = size(testIm);
 
 end

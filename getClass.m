@@ -1,21 +1,22 @@
-function [ class ] = getClass( imagePath , testData, scale)
+function [predClass, minDist] = getClass(imagePath , testData, dsImHeight, dsImWidth)
 
-class = []; % size 3 vector holding the class name, the dist and a image path from the class that is not the input image path
+% size 3 vector holding the class name, the dist and a image path from the class that is not the input image path
 
 % turn image into vector
-imVector = get_image_vector(cell2mat(imagePath) , scale);
+imVector = getImageVector(imagePath, dsImHeight, dsImWidth);
 
 % loop through class list and calc distances
-for i = 1:size(testData,1)
+
+for ii = 1:size(testData,1)
     
     % get approx image vector
-    X = testData{i,4};
+    X = testData{ii,4};
     transX = X';
     H = X/(transX*X)*transX;
-    approx_imVector = H*imVector;
+    approxImVector = H*imVector;
     
     % calc distance
-    dist = sqrt(sum((approx_imVector - imVector).^2));
+    dist = sqrt(sum((approxImVector - imVector).^2));
     
     % make sure output image isnt the same
     %trainingPaths = classCell(2);
@@ -28,12 +29,9 @@ for i = 1:size(testData,1)
     
     
     % update minDist if new dist is less
-    if isempty(class) || dist < cell2mat(class(2))
-        class = {testData{i}, dist};
-            
+    if ii == 1 || dist < minDist
+        predClass = testData{ii,1};
+        minDist = dist;
     end
 end
-
 end
-
-

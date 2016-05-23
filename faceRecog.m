@@ -61,16 +61,9 @@ set(handles.predIm,'visible','off')
 set(handles.graph,'visible','off') 
 
 % Hide check boxes
-set(handles.checkbox1,'visible','off')
-set(handles.checkbox2,'visible','off') 
-set(handles.checkbox3,'visible','off') 
-set(handles.checkbox4,'visible','off')
-set(handles.checkbox5,'visible','off') 
-set(handles.checkbox6,'visible','off') 
-set(handles.checkbox7,'visible','off')
-set(handles.checkbox8,'visible','off') 
-set(handles.checkbox9,'visible','off') 
-set(handles.checkbox10,'visible','off')
+for ii = 1:10
+    set(handles.(sprintf('checkbox%d',ii)),'visible','off');
+end
 
 % Update handles structure
 guidata(hObject, handles);
@@ -98,50 +91,17 @@ handles.dirName  = uigetdir('.\*.*','Please select an image dataset directory to
 [~, onlyDir, ~] = fileparts(handles.dirName);
 
 % Retrieve the class size and image size
-[handles.classSize, handles.widthRes] = imageSetProp(handles.dirName);
+[handles.classSize, handles.heightRes, handles.widthRes] = imageSetProp(handles.dirName);
 set(handles.maxSize,'String',handles.widthRes);
 set(handles.sldrCurr,'String',get(handles.downSize, 'value')*handles.widthRes);
 
-% Hide check boxes
-set(handles.checkbox1,'visible','off')
-set(handles.checkbox2,'visible','off') 
-set(handles.checkbox3,'visible','off') 
-set(handles.checkbox4,'visible','off')
-set(handles.checkbox5,'visible','off') 
-set(handles.checkbox6,'visible','off') 
-set(handles.checkbox7,'visible','off')
-set(handles.checkbox8,'visible','off') 
-set(handles.checkbox9,'visible','off') 
-set(handles.checkbox10,'visible','off')
-
-if handles.classSize > 0
-    set(handles.checkbox1,'visible','on')
-    if handles.classSize > 1
-        set(handles.checkbox2,'visible','on')
-        if handles.classSize > 2
-            set(handles.checkbox3,'visible','on')
-            if handles.classSize > 3
-                set(handles.checkbox4,'visible','on')
-                if handles.classSize > 4
-                    set(handles.checkbox5,'visible','on')
-                    if handles.classSize > 5
-                        set(handles.checkbox6,'visible','on')
-                        if handles.classSize > 6
-                            set(handles.checkbox7,'visible','on')
-                            if handles.classSize > 7
-                                set(handles.checkbox8,'visible','on')
-                                if handles.classSize > 8
-                                    set(handles.checkbox9,'visible','on')
-                                    if handles.classSize > 9
-                                        set(handles.checkbox10,'visible','on')
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
+% Show the correct number of checkboxes and set all to unchecked
+for ii = 1:10
+    set(handles.(sprintf('checkbox%d',ii)),'value', 0)
+    if handles.classSize > ii - 1
+        set(handles.(sprintf('checkbox%d',ii)),'visible','on')
+    else
+        set(handles.(sprintf('checkbox%d',ii)),'visible','off')
     end
 end
 
@@ -158,7 +118,8 @@ function downSize_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-set(handles.sldrCurr,'String',uint8(get(handles.downSize, 'value')*handles.widthRes));
+set(handles.sldrCurr,'Value',uint16(get(handles.downSize, 'value')*handles.widthRes));
+set(handles.sldrCurr,'String',uint16(get(handles.downSize, 'value')*handles.widthRes));
 
 % Update handles structure
 guidata(hObject, handles);
@@ -271,59 +232,35 @@ function simulate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Testing script for the project.
+% Get the status of all checkboxes and determine selection
+checkboxArray = zeros(1,handles.classSize);
+for ii = 1:10
+    checkboxArray(ii) = get(handles.(sprintf('checkbox%d', ii)), 'Value');
+end
+selection = find(checkboxArray);
+                               
+testData = getAllFiles(handles.dirName, selection , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));
 
-% constants
-cb1 = get(handles.checkbox1, 'Value');
-cb2 = get(handles.checkbox2, 'Value');
-cb3 = get(handles.checkbox3, 'Value');
-cb4 = get(handles.checkbox4, 'Value');
-cb5 = get(handles.checkbox5, 'Value');
-cb6 = get(handles.checkbox6, 'Value');
-cb7 = get(handles.checkbox7, 'Value');
-cb8 = get(handles.checkbox8, 'Value');
-cb9 = get(handles.checkbox9, 'Value');
-cb10 = get(handles.checkbox10, 'Value');
+numClasses = size(testData, 1);
+numTestIm = length(testData{1,3});
+result = zeros(numClasses, numTestIm);
 
-checkboxList = [cb1 cb2 cb3 cb4 cb5 cb6 cb7 cb8 cb9 cb10];
-selection = find(checkboxList);
-
-%numTrainingImages = 5;
-%scale = 50; 
-%selection = randperm(handles.classSize, numTrainingImages);
-
-% get test data                
-%dirName = uigetdir(pwd);                                    
-testData = getAllFiles(handles.dirName, selection , str2num(get(handles.sldrCurr, 'String')));   
-
-result = [];
-classes = {};
-numClasses = size(testData,1);
-
-% loop through classes in test data
-for i = 1:numClasses
-    counter = 0;
-    class_name =  testData{i,1};
+% loop through classes in test datahandles.heightRes/handles.widthRes
+for ii = 1:numClasses
+    className =  testData{ii,1};
     
     % get test paths
-    testPaths = testData{i,3};
-    numTestImages = size(testData{i,3},1);
+    testPaths = testData{ii,3};
     
     % for each test image calc class and check if correct 
-    for j = 1:numTestImages
-       file_path =  testPaths(j);
-       class = getClass(file_path, testData , str2num(get(handles.sldrCurr, 'String')));%result from getClass function.
-       detected_class_name = cell2mat(class(1));              %the class name as detected
-       distance = cell2mat(class(2));
-       if strcmp(detected_class_name,class_name );  %if correct
-           counter = counter +1;
+    for jj = 1:numTestIm
+       filePath = testPaths{jj};
+       [predClass, minDist] = getClass(filePath, testData , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));    %result from getClass function
+       if strcmp(predClass, className);  %if correct
+           result(ii,jj) = 1;
+       else
+           result(ii,jj) = 0;
        end
+       bar(result(:));
     end
-    result(i) = counter                      %put number of sucess of this class
-    classes{i} = class_name;
 end
-
-bar(result);
-Labels = class;
-set(gca, 'XTick', 1:4, 'XTickLabel', class);
-

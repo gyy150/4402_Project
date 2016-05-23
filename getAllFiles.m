@@ -1,4 +1,4 @@
-function [test_data]= getAllFiles(dirName, selection, size)
+function [testData]= getAllFiles(dirName, selection, dsImHeight, dsImWidth)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here?????
 
@@ -18,33 +18,25 @@ function [test_data]= getAllFiles(dirName, selection, size)
     subDirs = {dirData(dirIndex).name};                 % Get a list of the subdirectories
     validIndex = ~ismember(subDirs,{'.','..'});         % Find index of subdirectories that are not '.' or '..'
 
-    test_data = [];                                     % Initialize the regressor list array
+    testData = [];                                     % Initialize the regressor list array
 
     if ~isempty(fileList)
-        image_vector = [];
-        train_paths = {};
-        test_paths = {};
-        for i = 1:length(fileList)
-            if any(i == selection)
-                train_paths = [train_paths; fullfile(dirName,fileList{i})];
-                file_name = fileList(i);
-                image_vector = [image_vector get_image_vector(fullfile(dirName,fileList{i}), size)];          %stacking the image vector for each training image to build regressor
-            else
-                test_paths = [test_paths; fullfile(dirName,fileList{i})];
-            end
+        imageVector = zeros(dsImHeight*dsImWidth, length(selection));
+        trainPaths = fullfile(dirName, fileList(selection)).';
+        notSelection = setdiff(1:10, selection);
+        testPaths = fullfile(dirName, fileList(notSelection)).';
+        for ii = find(selection)
+            imageVector(:,ii) = getImageVector(fullfile(dirName, fileList{ii}), dsImHeight, dsImWidth);
         end
-        % after the loop, the Regressor for this class is the now stacked image_vector;
     end
     
-    
-    if all(validIndex == 0)
-        [~,name,~] = fileparts(dirName);
-        test_data = {name, train_paths, test_paths, image_vector};    %recursion terminate here 
-    else 
-        for i = find(validIndex)                            % Loop over valid subdirectories 
-        test_data = [test_data; getAllFiles(fullfile(dirName,subDirs{i}),selection,size)];       % Recursively call getAllFilesm, storing the regressor for each class in the regressor list
+    if any(validIndex == 1)
+        for ii = find(validIndex)                            % Loop over valid subdirectories 
+            testData = [testData; getAllFiles(fullfile(dirName,subDirs{ii}), selection, dsImHeight, dsImWidth)];       % Recursively call getAllFilesm, storing the regressor for each class in the regressor list
         end
+    else 
+        [~,className,~] = fileparts(dirName);
+        testData = {className, trainPaths, testPaths, imageVector};    %recursion terminate here 
     end
     
 end
-
