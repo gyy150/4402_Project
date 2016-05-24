@@ -255,11 +255,20 @@ for ii = 1:numClasses
     % for each test image calc class and check if correct 
     for jj = 1:numTestIm
        filePath = testPaths{jj};
+       
+       % Show test image in first axes
+       testImage = imread(filePath);
+       axes(handles.testIm);
+       imshow(testImage);
+       
        [predClass, minDist] = getClass(filePath, testData , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));    %result from getClass function
        if strcmp(predClass, className);  %if correct
            result(ii,jj) = 1;
+           
+           % Take first image in selected class and display in test image
        else
            result(ii,jj) = 0;
+           
        end
        bar(result(:));
     end
