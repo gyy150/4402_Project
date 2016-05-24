@@ -1,4 +1,4 @@
-function [predClass, minDist] = getClass(imagePath , testData, dsImHeight, dsImWidth)
+function [predClassNum, minDist] = getClass(imagePath , testData, dsImHeight, dsImWidth)
 
 % size 3 vector holding the class name, the dist and a image path from the class that is not the input image path
 
@@ -30,7 +30,7 @@ for ii = 1:size(testData,1)
     
     % update minDist if new dist is less
     if ii == 1 || dist < minDist
-        predClass = testData{ii,1};
+        predClassNum = ii;
         minDist = dist;
     end
 end

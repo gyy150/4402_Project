@@ -243,11 +243,15 @@ testData = getAllFiles(handles.dirName, selection , uint16(get(handles.sldrCurr,
 
 numClasses = size(testData, 1);
 numTestIm = length(testData{1,3});
-result = zeros(numClasses, numTestIm);
+result = zeros(numTestIm, numClasses);
+
+%POSITION = [750 80 300 20]; % Position of uiwaitbar in pixels.
+%H = uiwaitbar(POSITION);
 
 % loop through classes in test datahandles.heightRes/handles.widthRes
 for ii = 1:numClasses
-    className =  testData{ii,1};
+    %className =  testData{ii,1};
+    %uiwaitbar(H,ii/numClasses);
     
     % get test paths
     testPaths = testData{ii,3};
@@ -260,16 +264,28 @@ for ii = 1:numClasses
        testImage = imread(filePath);
        axes(handles.testIm);
        imshow(testImage);
+       drawnow;
        
-       [predClass, minDist] = getClass(filePath, testData , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));    %result from getClass function
-       if strcmp(predClass, className);  %if correct
-           result(ii,jj) = 1;
-           
-           % Take first image in selected class and display in test image
+       [predClassNum, minDist] = getClass(filePath, testData , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));    %result from getClass function
+       predImage = imread(testData{predClassNum, 2}{1});
+       %if strcmp(predClassNum, className);  %if correct
+       if predClassNum == ii
+           result(jj,ii) = 1;
+           axes(handles.predIm);
+           imshow(predImage);
+           drawnow;
        else
-           result(ii,jj) = 0;
-           
+           result(jj,ii) = 0;
+           axes(handles.predIm);
+           imshow(predImage);
+           drawnow;
        end
-       bar(result(:));
+       axes(handles.graph);
+       bar(result(:))
+       axis([0 numTestIm*numClasses 0 1])
+       drawnow;
     end
 end
+
+accuracy = (sum(result(:))/length(result(:)))*100;
+set(handles.accuracy, 'String', accuracy);
