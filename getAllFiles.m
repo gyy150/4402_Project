@@ -1,7 +1,5 @@
 function [testData]= getAllFiles(dirName, selection, dsImHeight, dsImWidth)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here?????
-
+% Scans image dataset directory and return test data for facial recognition
 % Inputs:   dirName   - directory path with all images contained
 %           selection - selection criteria for sorting to train and test
 %           size      - size to downscale images to
@@ -20,6 +18,7 @@ function [testData]= getAllFiles(dirName, selection, dsImHeight, dsImWidth)
 
     testData = [];                                     % Initialize the regressor list array
 
+    
     if ~isempty(fileList)
         imageVector = zeros(dsImHeight*dsImWidth, length(selection));
         trainPaths = fullfile(dirName, fileList(selection)).';

@@ -10,8 +10,8 @@ function [classSize, heightRes, widthRes] = imageSetProp(dirName)
     subDir1 = fullfile(dirName,subDirs{subDirList(1)});
     
     subDirData = dir(subDir1);                             % Get the data for the current directory
-    subDirIndex = [subDirData.isdir];                         % Find the index for directories
-    subFileList = {subDirData(~subDirIndex).name};               % Get a list of the files
+    subDirIndex = [subDirData.isdir];                      % Find the index for directories
+    subFileList = {subDirData(~subDirIndex).name};         % Get a list of the files
     
     classSize = length(subFileList);
     
