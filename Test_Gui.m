@@ -22,7 +22,7 @@ function varargout = Test_Gui(varargin)
 
 % Edit the above text to modify the response to help Test_Gui
 
-% Last Modified by GUIDE v2.5 18-May-2016 16:09:36
+% Last Modified by GUIDE v2.5 18-May-2016 18:35:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -55,9 +55,9 @@ function Test_Gui_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for Test_Gui
 handles.output = hObject;
 handles.scale = 50;
-set(handles.slider1, 'Max', 1);
-set(handles.slider1, 'Value', 0.1);
-set(handles.slider1, 'Min', 0);  
+set(handles.sampleSlider, 'Max', 1);
+set(handles.sampleSlider, 'Value', 0.1);
+set(handles.sampleSlider, 'Min', 0);  
 
 % Update handles structure
 guidata(hObject, handles);
@@ -80,13 +80,13 @@ set(handles.slider2, 'Min', 0);
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in pushbutton1.
-function pushbutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton1 (see GCBO)
+% --- Executes on button press in selectDir.
+function selectDir_Callback(hObject, eventdata, handles)
+% hObject    handle to selectDir (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 dirName = uigetdir(pwd);                            %get the directory where image sets is at, starting path is the current path
-set(handles.text2,'String',dirName);
+set(handles.currVal,'String',dirName);
 handles.dirName = dirName ;  
 % Update handles structure
 guidata(hObject, handles);
@@ -96,8 +96,8 @@ guidata(hObject, handles);
 
 
 % --- Executes on slider movement.
-function slider1_Callback(hObject, eventdata, handles)
-% hObject    handle to slider1 (see GCBO)
+function sampleSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to sampleSlider (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 get(hObject,'Value')
@@ -108,8 +108,8 @@ a = get
 
 
 % --- Executes during object creation, after setting all properties.
-function slider1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to slider1 (see GCBO)
+function sampleSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sampleSlider (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -223,9 +223,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton2.
-function pushbutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton2 (see GCBO)
+% --- Executes on button press in runTest.
+function runTest_Callback(hObject, eventdata, handles)
+% hObject    handle to runTest (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 scale = handles.scale;

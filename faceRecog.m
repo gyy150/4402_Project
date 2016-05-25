@@ -59,11 +59,15 @@ handles.output = hObject;
 set(handles.testIm,'visible','off') 
 set(handles.predIm,'visible','off') 
 set(handles.graph,'visible','off') 
+set(handles.border,'visible','off')
 
 % Hide check boxes
 for ii = 1:10
     set(handles.(sprintf('checkbox%d',ii)),'visible','off');
 end
+
+% Hide slider bar and text
+
 
 % Update handles structure
 guidata(hObject, handles);
@@ -118,8 +122,10 @@ function downSize_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-set(handles.sldrCurr,'Value',uint16(get(handles.downSize, 'value')*handles.widthRes));
-set(handles.sldrCurr,'String',uint16(get(handles.downSize, 'value')*handles.widthRes));
+currVal = get(handles.downSize, 'value')*handles.widthRes;
+
+set(handles.sldrCurr,'Value', currVal);
+set(handles.sldrCurr,'String', currVal);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -243,7 +249,8 @@ testData = getAllFiles(handles.dirName, selection , uint16(get(handles.sldrCurr,
 
 numClasses = size(testData, 1);
 numTestIm = length(testData{1,3});
-result = zeros(numTestIm, numClasses);
+result = zeros(1,numTestIm*numClasses);
+mu = zeros(1,numTestIm*numClasses);
 
 %POSITION = [750 80 300 20]; % Position of uiwaitbar in pixels.
 %H = uiwaitbar(POSITION);
@@ -266,22 +273,27 @@ for ii = 1:numClasses
        imshow(testImage);
        drawnow;
        
-       [predClassNum, minDist] = getClass(filePath, testData , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));    %result from getClass function
+       [predClassNum] = getClass(filePath, testData , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));    %result from getClass function
        predImage = imread(testData{predClassNum, 2}{1});
        %if strcmp(predClassNum, className);  %if correct
        if predClassNum == ii
-           result(jj,ii) = 1;
+           result((ii-1)*numTestIm + jj) = 1;
+           set(handles.border, 'Color','green','visible','on', 'box','off','xtick',[],'ytick',[],'ztick',[],'xcolor',[1 1 1],'ycolor',[1 1 1]);
            axes(handles.predIm);
            imshow(predImage);
            drawnow;
        else
-           result(jj,ii) = 0;
+           result((ii-1)*numTestIm + jj) = 0;
+           set(handles.border, 'Color','red','visible','on', 'box','off','xtick',[],'ytick',[],'ztick',[],'xcolor',[1 1 1],'ycolor',[1 1 1]);
            axes(handles.predIm);
            imshow(predImage);
            drawnow;
        end
+       
+       mu((ii-1)*numTestIm + jj) = mean(result(1:(ii-1)*numTestIm + jj));
+       
        axes(handles.graph);
-       bar(result(:))
+       plotyy(1:length(result), result, 1:length(result), mu, 'bar','scatter');
        axis([0 numTestIm*numClasses 0 1])
        drawnow;
     end

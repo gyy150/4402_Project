@@ -1,4 +1,4 @@
-function [predClassNum, minDist] = getClass(imagePath , testData, dsImHeight, dsImWidth)
+function [predClassNum] = getClass(imagePath , testData, dsImHeight, dsImWidth)
 
 % size 3 vector holding the class name, the dist and a image path from the class that is not the input image path
 

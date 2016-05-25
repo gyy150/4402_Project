@@ -10,7 +10,7 @@ function [testData]= getAllFiles(dirName, selection, dsImHeight, dsImWidth)
 %               col1 - class name
 %               col2 - paths of all training images
 %               col3 - paths of all testing images
-%               col4 - class regressor
+%               col4 - class regressor matrix of columnised train images
     
     dirData = dir(dirName);                             % Get the data for the current directory
     dirIndex = [dirData.isdir];                         % Find the index for directories
