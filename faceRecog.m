@@ -66,8 +66,8 @@ for ii = 1:10
     set(handles.(sprintf('checkbox%d',ii)),'visible','off');
 end
 
-% Hide slider bar and text
-
+% Disable slider bar
+set(handles.downSize,'Enable','off')
 
 % Update handles structure
 guidata(hObject, handles);
@@ -108,6 +108,9 @@ for ii = 1:10
         set(handles.(sprintf('checkbox%d',ii)),'visible','off')
     end
 end
+
+% Enable Slider
+set(handles.downSize,'Enable','on')
 
 % Display directory name
 set(handles.datasetText,'String',onlyDir);
@@ -243,6 +246,15 @@ checkboxArray = zeros(1,handles.classSize);
 for ii = 1:10
     checkboxArray(ii) = get(handles.(sprintf('checkbox%d', ii)), 'Value');
 end
+
+% % Generate error messages if needed
+% if all(checkboxArray == 0)
+%     set(handles.errorText,'String','At least one image must be used for training')
+% else if all(checkboxArray == 1)
+%     set(handles.errorText,'String','At least one image must be used for training')
+
+
+
 selection = find(checkboxArray);
                                
 testData = getAllFiles(handles.dirName, selection , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));
