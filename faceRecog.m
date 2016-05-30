@@ -55,7 +55,7 @@ function faceRecog_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for faceRecog
 handles.output = hObject;
 
-% Hide axes
+% Hide all axes
 set(handles.testIm,'visible','off') 
 set(handles.predIm,'visible','off') 
 set(handles.graph,'visible','off') 
