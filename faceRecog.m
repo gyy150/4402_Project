@@ -22,7 +22,7 @@ function varargout = faceRecog(varargin)
 
 % Edit the above text to modify the response to help faceRecog
 
-% Last Modified by GUIDE v2.5 23-May-2016 09:05:01
+% Last Modified by GUIDE v2.5 01-Jun-2016 02:31:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -61,13 +61,18 @@ set(handles.predIm,'visible','off')
 set(handles.graph,'visible','off') 
 set(handles.border,'visible','off')
 
-% Hide check boxes
+% Hide selection check boxes
 for ii = 1:10
     set(handles.(sprintf('checkbox%d',ii)),'visible','off');
 end
 
-% Disable slider bar
+% Disable slider bar and checkboxes
 set(handles.downSize,'Enable','off')
+set(handles.square,'Enable','off')
+set(handles.lockAR,'Enable','off')
+
+% Set square checkbox to selected
+set(handles.square,'value', 1)
 
 % Update handles structure
 guidata(hObject, handles);
@@ -92,12 +97,34 @@ function dataSel_Callback(hObject, eventdata, handles)
 
 % Create file explorer for opening file
 handles.dirName  = uigetdir('.\*.*','Please select an image dataset directory to load');
+if isequal(handles.dirName,0)
+    return
+end
 [~, onlyDir, ~] = fileparts(handles.dirName);
 
 % Retrieve the class size and image size
 [handles.classSize, handles.heightRes, handles.widthRes] = imageSetProp(handles.dirName);
-set(handles.maxSize,'String',handles.widthRes);
-set(handles.sldrCurr,'String',get(handles.downSize, 'value')*handles.widthRes);
+set(handles.maxSize,'String', handles.widthRes);
+
+% Retrieve the slider value
+currVal = floor(get(handles.downSize, 'value')*handles.widthRes);
+if (currVal < 2)
+    currVal = 2;
+end
+
+% Set values to either square or locked aspect ratio
+if get(handles.square, 'Value');
+    set(handles.sldrCurr,'Value', currVal);
+    set(handles.sldrCurr,'String', currVal);
+    set(handles.sldrCurrH,'Value', currVal);
+    set(handles.sldrCurrH,'String', currVal);
+else
+    set(handles.sldrCurr,'Value', currVal);
+    set(handles.sldrCurr,'String', currVal);
+    height = floor(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes);
+    set(handles.sldrCurrH,'Value', height);
+    set(handles.sldrCurrH,'String', height);
+end
 
 % Show the correct number of checkboxes and set all to unchecked
 for ii = 1:10
@@ -109,8 +136,10 @@ for ii = 1:10
     end
 end
 
-% Enable Slider
+% Enable slider and checkboxes
 set(handles.downSize,'Enable','on')
+set(handles.square,'Enable','on')
+set(handles.lockAR,'Enable','on')
 
 % Display directory name
 set(handles.datasetText,'String',onlyDir);
@@ -125,10 +154,26 @@ function downSize_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% Get the slider value
 currVal = floor(get(handles.downSize, 'value')*handles.widthRes);
 
-set(handles.sldrCurr,'Value', currVal);
-set(handles.sldrCurr,'String', currVal);
+if (currVal < 2)
+    currVal = 2;
+end
+
+% Set values to either square or locked aspect ratio
+if get(handles.square, 'Value');
+    set(handles.sldrCurr,'Value', currVal);
+    set(handles.sldrCurr,'String', currVal);
+    set(handles.sldrCurrH,'Value', currVal);
+    set(handles.sldrCurrH,'String', currVal);
+else
+    set(handles.sldrCurr,'Value', currVal);
+    set(handles.sldrCurr,'String', currVal);
+    height = floor(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes);
+    set(handles.sldrCurrH,'Value', height);
+    set(handles.sldrCurrH,'String', height);
+end
 
 % Update handles structure
 guidata(hObject, handles);
@@ -151,7 +196,6 @@ function checkbox1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox1
 
 
 % --- Executes on button press in checkbox2.
@@ -160,7 +204,6 @@ function checkbox2_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox2
 
 
 % --- Executes on button press in checkbox3.
@@ -169,8 +212,6 @@ function checkbox3_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox3
-
 
 % --- Executes on button press in checkbox4.
 function checkbox4_Callback(hObject, eventdata, handles)
@@ -178,7 +219,6 @@ function checkbox4_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox4
 
 
 % --- Executes on button press in checkbox5.
@@ -187,7 +227,6 @@ function checkbox5_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox5
 
 
 % --- Executes on button press in checkbox6.
@@ -196,7 +235,6 @@ function checkbox6_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox6
 
 
 % --- Executes on button press in checkbox7.
@@ -205,7 +243,6 @@ function checkbox7_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox7
 
 
 % --- Executes on button press in checkbox8.
@@ -214,7 +251,6 @@ function checkbox8_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox8
 
 
 % --- Executes on button press in checkbox9.
@@ -223,7 +259,6 @@ function checkbox9_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox9
 
 
 % --- Executes on button press in checkbox10.
@@ -232,7 +267,6 @@ function checkbox10_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox10
 
 
 % --- Executes on button press in simulate.
@@ -241,41 +275,46 @@ function simulate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% Error message if no dataset is selected
+if ~isfield(handles, 'dirName')
+    set(handles.errorText,'String', 'No dataset selected');
+    return
+else
+    set(handles.errorText,'String', '');
+end
+
 % Get the status of all checkboxes and determine selection
 checkboxArray = zeros(1,handles.classSize);
 for ii = 1:10
     checkboxArray(ii) = get(handles.(sprintf('checkbox%d', ii)), 'Value');
 end
 
-% % Generate error messages if needed
-% if all(checkboxArray == 0)
-%     set(handles.errorText,'String','At least one image must be used for training')
-% else if all(checkboxArray == 1)
-%     set(handles.errorText,'String','At least one image must be used for training')
-
-
+% Error if no train images are selected or all are selected
+if all(checkboxArray == 0)
+    set(handles.errorText,'String','At least one image must be used for training')
+    return
+elseif all(checkboxArray(1:handles.classSize) == 1)
+    set(handles.errorText,'String','At least one image must be used for testing')
+    return
+end
 
 selection = find(checkboxArray);
-                               
-testData = getAllFiles(handles.dirName, selection , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));
+
+% Find all the data of the test directory
+testData = getAllFiles(handles.dirName, selection , get(handles.sldrCurrH, 'Value'), get(handles.sldrCurr, 'Value'));
 
 numClasses = size(testData, 1);
 numTestIm = length(testData{1,3});
 result = zeros(1,numTestIm*numClasses);
 mu = zeros(1,numTestIm*numClasses);
 
-%POSITION = [750 80 300 20]; % Position of uiwaitbar in pixels.
-%H = uiwaitbar(POSITION);
-
-% loop through classes in test datahandles.heightRes/handles.widthRes
+% Loop through classes for face recognition
 for ii = 1:numClasses
-    %className =  testData{ii,1};
-    %uiwaitbar(H,ii/numClasses);
-    
-    % get test paths
+   
+    % Get test paths
     testPaths = testData{ii,3};
     
-    % for each test image calc class and check if correct 
+    % For each test image calc class and check if correct 
     for jj = 1:numTestIm
        filePath = testPaths{jj};
        
@@ -285,31 +324,105 @@ for ii = 1:numClasses
        imshow(testImage);
        drawnow;
        
-       [predClassNum] = getClass(filePath, testData , uint16(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes), get(handles.sldrCurr, 'Value'));    %result from getClass function
+       % Find the predicted class and the first train image from class
+       [predClassNum] = getClass(filePath, testData , get(handles.sldrCurrH, 'Value'), get(handles.sldrCurr, 'Value'));
        predImage = imread(testData{predClassNum, 2}{1});
-       %if strcmp(predClassNum, className);  %if correct
+       
+       % Display depending on whether the correct predicted image
        if predClassNum == ii
            result((ii-1)*numTestIm + jj) = 1;
-           set(handles.border, 'Color','green','visible','on', 'box','off','xtick',[],'ytick',[],'ztick',[],'xcolor',[1 1 1],'ycolor',[1 1 1]);
+           set(handles.border, 'Color', [0.2 0.8 0.2],'visible','on', 'box','off','xtick',[],'ytick',[],'ztick',[],'xcolor',[1 1 1],'ycolor',[1 1 1]);
            axes(handles.predIm);
            imshow(predImage);
            drawnow;
        else
            result((ii-1)*numTestIm + jj) = 0;
-           set(handles.border, 'Color','red','visible','on', 'box','off','xtick',[],'ytick',[],'ztick',[],'xcolor',[1 1 1],'ycolor',[1 1 1]);
+           set(handles.border, 'Color',[0.8 0.2 0.2],'visible','on', 'box','off','xtick',[],'ytick',[],'ztick',[],'xcolor',[1 1 1],'ycolor',[1 1 1]);
            axes(handles.predIm);
            imshow(predImage);
            drawnow;
        end
        
-       mu((ii-1)*numTestIm + jj) = mean(result(1:(ii-1)*numTestIm + jj));
+       % Calculate the average detection rate after each face
+       mu((ii-1)*numTestIm + jj) = 100*mean(result(1:(ii-1)*numTestIm + jj));
        
+       % Plot bar graph of individual results and average line
        axes(handles.graph);
-       plotyy(1:length(result), result, 1:length(result), mu, 'bar','line');
-       axis([0 numTestIm*numClasses 0 1])
+       [AX, H1, H2] = plotyy(1:length(result), result, 1:((ii-1)*numTestIm + jj), mu(1:(ii-1)*numTestIm + jj), 'bar','line');
+       set(AX(1),'YLim',[0 1])
+       set(AX(1),'XLim',[0.5 numTestIm*numClasses+0.5])
+       set(AX(1),'xtick',[1 numTestIm*numClasses])
+       set(AX(1),'ytick',[])
+       set(AX(2),'YLim',[0 100])
+       set(AX(2),'XLim',[0.5 numTestIm*numClasses+0.5])
+       set(AX(2),'ytick',0:10:100)
+       xlabel('Test Image Number')
+       set(get(AX(2),'Ylabel'),'string','Accuracy (%)')
+       set(H1, 'FaceColor', [0.8, 0.8, 0.8])
+       set(H1, 'EdgeColor', [0.8, 0.8, 0.8])
+       set(H2, 'LineWidth', 3)
        drawnow;
+       
+       % Display running average
+       set(handles.accuracy, 'String', sprintf('%0.1f',(mu((ii-1)*numTestIm + jj))));
     end
 end
 
-accuracy = (sum(result(:))/length(result(:)))*100;
-set(handles.accuracy, 'String', accuracy);
+
+% --- Executes on button press in lockAR.
+function lockAR_Callback(hObject, eventdata, handles)
+% hObject    handle to lockAR (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get the state of the checkbox
+state = get(hObject,'Value');
+
+% Retrieve the slider value
+currVal = floor(get(handles.downSize, 'value')*handles.widthRes);
+if (currVal < 2)
+    currVal = 2;
+end
+
+% Only one checkbox can be selected at a time and adjust resolution values
+% accordingly
+if state == 0
+    set(handles.square,'Value',1)
+    set(handles.sldrCurrH,'Value', currVal);
+    set(handles.sldrCurrH,'String', currVal);
+else
+    set(handles.square,'Value',0)
+    height = floor(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes);
+    set(handles.sldrCurrH,'Value', height);
+    set(handles.sldrCurrH,'String', height);
+end
+
+
+
+% --- Executes on button press in square.
+function square_Callback(hObject, eventdata, handles)
+% hObject    handle to square (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get the state of the checkbox
+state = get(hObject,'Value');
+
+% Retrieve the slider value
+currVal = floor(get(handles.downSize, 'value')*handles.widthRes);
+if (currVal < 2)
+    currVal = 2;
+end
+
+% Only one checkbox can be selected at a time and adjust resolution values
+% accordingly
+if state == 0
+    set(handles.lockAR,'Value',1)
+    height = floor(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes);
+    set(handles.sldrCurrH,'Value', height);
+    set(handles.sldrCurrH,'String', height);
+else
+    set(handles.lockAR,'Value',0)
+    set(handles.sldrCurrH,'Value', currVal);
+    set(handles.sldrCurrH,'String', currVal);
+end
