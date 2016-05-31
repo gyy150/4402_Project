@@ -125,7 +125,7 @@ function downSize_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-currVal = get(handles.downSize, 'value')*handles.widthRes;
+currVal = floor(get(handles.downSize, 'value')*handles.widthRes);
 
 set(handles.sldrCurr,'Value', currVal);
 set(handles.sldrCurr,'String', currVal);
@@ -305,7 +305,7 @@ for ii = 1:numClasses
        mu((ii-1)*numTestIm + jj) = mean(result(1:(ii-1)*numTestIm + jj));
        
        axes(handles.graph);
-       plotyy(1:length(result), result, 1:length(result), mu, 'bar','scatter');
+       plotyy(1:length(result), result, 1:length(result), mu, 'bar','line');
        axis([0 numTestIm*numClasses 0 1])
        drawnow;
     end

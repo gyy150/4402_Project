@@ -30,7 +30,7 @@ testData = [];
 if ~isempty(fileList)
     imageVector = zeros(dsImHeight*dsImWidth, length(selection));
     trainPaths = fullfile(dirName, fileList(selection)).';
-    notSelection = setdiff(1:10, selection);
+    notSelection = setdiff(1:length(fileList), selection);
     testPaths = fullfile(dirName, fileList(notSelection)).';
     for ii = find(selection)
         imageVector(:,ii) = getImageVector(fullfile(dirName, fileList{ii}), dsImHeight, dsImWidth);
