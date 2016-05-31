@@ -1,5 +1,5 @@
 function [testData]= getAllFiles(dirName, selection, dsImHeight, dsImWidth)
-% Scans image dataset directory, sorts and returns data for facial
+% Read image dataset directory, sorts and returns data for facial
 % recognition
 %
 % Inputs:   dirName     - directory path with all images contained
@@ -23,10 +23,10 @@ fileList = {dirData(~dirIndex).name};
 subDirs = {dirData(dirIndex).name}; 
 validIndex = ~ismember(subDirs,{'.','..'});
 
-% Initialize the regressor list array
 testData = [];     
 
-% For 
+% For files in directory find class name, file names of train and test
+% images and create regressor array
 if ~isempty(fileList)
     imageVector = zeros(dsImHeight*dsImWidth, length(selection));
     trainPaths = fullfile(dirName, fileList(selection)).';
@@ -37,13 +37,14 @@ if ~isempty(fileList)
     end
 end
 
+% Recursively call getAllFiles for each sub-directory
 if any(validIndex == 1)
-    for ii = find(validIndex)                            % Loop over valid subdirectories 
-        testData = [testData; getAllFiles(fullfile(dirName,subDirs{ii}), selection, dsImHeight, dsImWidth)];       % Recursively call getAllFilesm, storing the regressor for each class in the regressor list
+    for ii = find(validIndex)
+        testData = [testData; getAllFiles(fullfile(dirName,subDirs{ii}), selection, dsImHeight, dsImWidth)];
     end
+% Recursion termination
 else 
     [~,className,~] = fileparts(dirName);
-    testData = {className, trainPaths, testPaths, imageVector};    %recursion terminate here 
-end
+    testData = {className, trainPaths, testPaths, imageVector};
     
 end
