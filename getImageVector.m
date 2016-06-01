@@ -11,6 +11,9 @@ function imageVector = getImageVector(imagePath, dsImHeight, dsImWidth)
 
 % Read and downscale image
 im = imread(imagePath);
+if size(im,3) == 3
+   im = rgb2gray(im); 
+end
 im = imresize(im, [dsImHeight dsImWidth]);
 
 % Normalise and columnise image

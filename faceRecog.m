@@ -359,7 +359,7 @@ for ii = 1:numClasses
        xlabel('Test Image Number')
        set(get(AX(2),'Ylabel'),'string','Accuracy (%)')
        set(H1, 'FaceColor', [0.8, 0.8, 0.8])
-       set(H1, 'EdgeColor', [0.8, 0.8, 0.8])
+       set(H1, 'EdgeColor', 'none')
        set(H2, 'LineWidth', 3)
        drawnow;
        
