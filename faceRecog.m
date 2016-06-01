@@ -22,7 +22,7 @@ function varargout = faceRecog(varargin)
 
 % Edit the above text to modify the response to help faceRecog
 
-% Last Modified by GUIDE v2.5 01-Jun-2016 02:31:36
+% Last Modified by GUIDE v2.5 01-Jun-2016 16:28:51
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -70,6 +70,7 @@ end
 set(handles.downSize,'Enable','off')
 set(handles.square,'Enable','off')
 set(handles.lockAR,'Enable','off')
+set(handles.tenByFive, 'Enable', 'off')
 
 % Set square checkbox to selected
 set(handles.square,'value', 1)
@@ -112,18 +113,32 @@ if (currVal < 2)
     currVal = 2;
 end
 
-% Set values to either square or locked aspect ratio
+% Set values to either square, locked aspect ratio or 10x5
 if get(handles.square, 'Value');
+    % Enable the slider
+    set(handles.downSize,'Enable','on')
+    
     set(handles.sldrCurr,'Value', currVal);
     set(handles.sldrCurr,'String', currVal);
     set(handles.sldrCurrH,'Value', currVal);
     set(handles.sldrCurrH,'String', currVal);
-else
+elseif get(handles.lockAR, 'Value')
+    % Enable the slider
+    set(handles.downSize,'Enable','on')
+    
     set(handles.sldrCurr,'Value', currVal);
     set(handles.sldrCurr,'String', currVal);
     height = floor(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes);
     set(handles.sldrCurrH,'Value', height);
     set(handles.sldrCurrH,'String', height);
+else
+    % Disable the slider
+    set(handles.downSize,'Enable','off')
+    
+    set(handles.sldrCurr,'Value', 5);
+    set(handles.sldrCurr,'String', 5);
+    set(handles.sldrCurrH,'Value', 10);
+    set(handles.sldrCurrH,'String', 10);
 end
 
 % Show the correct number of checkboxes and set all to unchecked
@@ -136,10 +151,10 @@ for ii = 1:10
     end
 end
 
-% Enable slider and checkboxes
-set(handles.downSize,'Enable','on')
+% Enable checkboxes
 set(handles.square,'Enable','on')
 set(handles.lockAR,'Enable','on')
+set(handles.tenByFive,'Enable','on')
 
 % Display directory name
 set(handles.datasetText,'String',onlyDir);
@@ -375,6 +390,9 @@ function lockAR_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% Enable the slider
+set(handles.downSize,'Enable','on')
+
 % Get the state of the checkbox
 state = get(hObject,'Value');
 
@@ -388,11 +406,21 @@ end
 % accordingly
 if state == 0
     set(handles.square,'Value',1)
+    set(handles.tenByFive,'Value',0)
+    
+    % Set height and width
+    set(handles.sldrCurr,'Value', currVal);
+    set(handles.sldrCurr,'String', currVal);
     set(handles.sldrCurrH,'Value', currVal);
     set(handles.sldrCurrH,'String', currVal);
 else
     set(handles.square,'Value',0)
-    height = floor(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes);
+    set(handles.tenByFive,'Value',0)
+    height = floor(currVal*handles.heightRes/handles.widthRes);
+    
+    % Set height and width
+    set(handles.sldrCurr,'Value', currVal);
+    set(handles.sldrCurr,'String', currVal);
     set(handles.sldrCurrH,'Value', height);
     set(handles.sldrCurrH,'String', height);
 end
@@ -404,6 +432,9 @@ function square_Callback(hObject, eventdata, handles)
 % hObject    handle to square (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% Enable the slider
+set(handles.downSize,'Enable','on')
 
 % Get the state of the checkbox
 state = get(hObject,'Value');
@@ -418,11 +449,68 @@ end
 % accordingly
 if state == 0
     set(handles.lockAR,'Value',1)
-    height = floor(get(handles.sldrCurr, 'Value')*handles.heightRes/handles.widthRes);
+    set(handles.tenByFive,'Value',0)
+    height = floor(currVal*handles.heightRes/handles.widthRes);
+    
+    % Set height and width
+    set(handles.sldrCurr,'Value', currVal);
+    set(handles.sldrCurr,'String', currVal);
     set(handles.sldrCurrH,'Value', height);
     set(handles.sldrCurrH,'String', height);
 else
     set(handles.lockAR,'Value',0)
+    set(handles.tenByFive,'Value',0)
+    
+    % Set height and width
+    set(handles.sldrCurr,'Value', currVal);
+    set(handles.sldrCurr,'String', currVal);
     set(handles.sldrCurrH,'Value', currVal);
     set(handles.sldrCurrH,'String', currVal);
+end
+
+
+% --- Executes on button press in tenByFive.
+function tenByFive_Callback(hObject, eventdata, handles)
+% hObject    handle to tenByFive (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Disable the slider
+set(handles.downSize,'Enable','on')
+
+% Get the state of the checkbox
+state = get(hObject,'Value');
+
+% Retrieve the slider value
+currVal = floor(get(handles.downSize, 'value')*handles.widthRes);
+if (currVal < 2)
+    currVal = 2;
+end
+
+% Only one checkbox can be selected at a time and adjust resolution values
+% accordingly
+if state == 0
+    set(handles.lockAR,'Value',1)
+    set(handles.square,'Value',0)
+    height = floor(currVal*handles.heightRes/handles.widthRes);
+    
+    % Set height and width
+    set(handles.sldrCurr,'Value', currVal);
+    set(handles.sldrCurr,'String', currVal);
+    set(handles.sldrCurrH,'Value', height);
+    set(handles.sldrCurrH,'String', height);
+    
+else
+    % Disable the slider
+    set(handles.downSize,'Enable','off')
+    
+    % Uncheck other boxes
+    set(handles.lockAR,'Value',0)
+    set(handles.square,'Value',0)
+    
+    % Set height and width
+    set(handles.sldrCurr,'Value', 5);
+    set(handles.sldrCurr,'String', 5);
+    set(handles.sldrCurrH,'Value', 10);
+    set(handles.sldrCurrH,'String', 10);
 end
